@@ -13,6 +13,7 @@
 
     <modules>
         <module>authorization-server-minimal-sample</module>
+        <module>authorization-server-pkce-sample</module>
     </modules>
 
 </project>

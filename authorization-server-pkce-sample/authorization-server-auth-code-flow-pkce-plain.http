@@ -1,0 +1,43 @@
+###
+# @no-redirect
+GET http://localhost:8082/oauth/authorize?
+        response_type=code
+        &client_id=public-client
+        &redirect_uri=http://localhost:9092/dummy-client
+        &scope=SCOPE_TEST
+        &state=sdf7s990s
+        &code_challenge=Huag6ykQU7SaEYKtmNUeM8txt4HzEIfG
+        &code_challenge_method=plain
+
+> {%
+    client.test("Should return to client with code and state", function() {
+        client.assert(response.status === 302, "Wrong response status");
+        client.assert(response.headers.valueOf('Location').match('(.*code=)(.*)&state=sdf7s990s') != null, "Wrong redirect");
+    });
+
+    client.global.set("authorization_code", response.headers.valueOf('Location').match('(.*code=)(.*)&state=sdf7s990s')[2] );
+    client.log(client.global.get("authorization_code"))
+ %}
+
+###
+POST http://localhost:8082/oauth/token?
+        grant_type=authorization_code
+        &client_id=public-client
+        &code={{authorization_code}}
+        &redirect_uri=http://localhost:9092/dummy-client
+        &code_verifier=Huag6ykQU7SaEYKtmNUeM8txt4HzEIfG
+
+
+> {%
+    client.test("Should return the token", function() {
+        client.assert(response.status === 200, "Wrong response status");
+        client.assert(response.body.access_token, "access_token is expected");
+        client.assert(response.body.token_type === 'bearer', "Wrong token type");
+        client.assert(response.body.refresh_token == null, "refresh_token is expected");
+        client.assert(response.body.expires_in, "expires_in is expected");
+        client.assert(response.body.scope === 'SCOPE_TEST', "Wrong scope");
+    });
+ %}
+
+
+
