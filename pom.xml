@@ -1,0 +1,18 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.srempfer.security.oauth</groupId>
+    <artifactId>spring-security-oauth-samples</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Spring Security OAuth Samples</name>
+    <url>https://github.com/srempfer/spring-security-oauth-samples</url>
+
+    <modules>
+        <module>authorization-server-minimal-sample</module>
+    </modules>
+
+</project>
