@@ -15,6 +15,7 @@
         <module>authorization-server-addons</module>
         <module>authorization-server-minimal-sample</module>
         <module>authorization-server-pkce-sample</module>
+        <module>authorization-server-introspect-sample</module>
 		<module>client-oauth2-sample</module>
     </modules>
 
