@@ -1,0 +1,67 @@
+### Get the csrf token for login
+GET http://localhost:8083/login
+
+> {%
+    client.test("Should return login page", function() {
+        client.assert(response.status === 200, "Wrong response status");
+        client.assert(response.body.indexOf("_csrf") !== -1, 'Wrong content');
+        client.assert(response.body.indexOf("username") !== -1, 'Wrong content');
+        client.assert(response.body.indexOf("password") !== -1, 'Wrong content');
+    });
+
+    client.global.set("csrf-token", response.body.match('(.*name="_csrf" type="hidden" value=")(.*)(".*)')[2] );
+    client.log(client.global.get("csrf-token"))
+ %}
+
+### Do login
+POST http://localhost:8083/login
+Content-Type: application/x-www-form-urlencoded
+
+username=testuser&password=testpw&_csrf={{csrf-token}}
+
+> {%
+    client.test("Should login user", function() {
+        client.assert(response.status === 302, "Wrong response status");
+        client.assert(response.headers.valueOf("Location") === "http://localhost:8083/", "Wrong redirect");
+    });
+ %}
+
+### Do Authorize
+# @no-redirect
+GET http://localhost:8083/oauth/authorize?
+        response_type=code
+        &client_id=private-client
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-int
+        &scope=private-client-scope-int
+        &state=sdf7s990s
+
+> {%
+    client.test("Should return to client with code and state", function() {
+        client.assert(response.status === 302, "Wrong response status");
+        client.assert(response.headers.valueOf('Location').match('(.*code=)(.*)&state=sdf7s990s') != null, "Wrong redirect");
+    });
+
+    client.global.set("authorization_code", response.headers.valueOf('Location').match('(.*code=)(.*)&state=sdf7s990s')[2] );
+    client.log(client.global.get("authorization_code"))
+ %}
+
+### Get token
+POST http://localhost:8083/oauth/token?
+        grant_type=authorization_code
+        &code={{authorization_code}}
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-int
+Authorization: Basic private-client secret
+
+> {%
+    client.test("Should return the token", function() {
+        client.assert(response.status === 200, "Wrong response status");
+        client.assert(response.body.access_token, "access_token is expected");
+        client.assert(response.body.token_type === "bearer", "Wrong token type");
+        client.assert(response.body.refresh_token, "refresh_token is expected");
+        client.assert(response.body.expires_in, "expires_in is expected");
+        client.assert(response.body.scope === "private-client-scope-int", "Wrong scope");
+    });
+
+    client.global.set("access-token", response.body.access_token );
+    client.log(client.global.get("access-token"))
+ %}
