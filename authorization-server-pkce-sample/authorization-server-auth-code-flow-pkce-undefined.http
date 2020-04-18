@@ -3,8 +3,8 @@
 GET http://localhost:8082/oauth/authorize?
         response_type=code
         &client_id=public-client
-        &redirect_uri=http://localhost:9092/dummy-client
-        &scope=SCOPE_TEST
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-public-client-pkce
+        &scope=public-client-scope-pkce
         &state=sdf7s990s
         &code_challenge=Huag6ykQU7SaEYKtmNUeM8txt4HzEIfG
 
@@ -23,7 +23,7 @@ POST http://localhost:8082/oauth/token?
         grant_type=authorization_code
         &client_id=public-client
         &code={{authorization_code}}
-        &redirect_uri=http://localhost:9092/dummy-client
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-public-client-pkce
         &code_verifier=Huag6ykQU7SaEYKtmNUeM8txt4HzEIfG
 
 
@@ -34,7 +34,7 @@ POST http://localhost:8082/oauth/token?
         client.assert(response.body.token_type === 'bearer', "Wrong token type");
         client.assert(response.body.refresh_token == null, "refresh_token is expected");
         client.assert(response.body.expires_in, "expires_in is expected");
-        client.assert(response.body.scope === 'SCOPE_TEST', "Wrong scope");
+        client.assert(response.body.scope === 'public-client-scope-pkce', "Wrong scope");
     });
  %}
 

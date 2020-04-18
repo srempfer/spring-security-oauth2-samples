@@ -94,17 +94,17 @@ public class AuthorizationServerPkceSampleApplication {
 					inMemoryBuilder
 							.withClient("private-client")
 							.secret("secret")
-							.redirectUris(new String[] {"http://localhost:9091/dummy-client"})
-							.scopes ( new String[] {"SCOPE_TEST"} )
-							.autoApprove(new String[] {"SCOPE_TEST"})
+							.redirectUris(new String[] {"http://localhost:9091/login/oauth2/code/sample-private-client-pkce"})
+							.scopes ( new String[] {"private-client-scope-pkce"} )
+							.autoApprove(new String[] {"private-client-scope-pkce"})
 							.authorizedGrantTypes(new String[] {"authorization_code","refresh_token"});
 
 					inMemoryBuilder
 							.withClient("public-client")
 							.secret(null)
-							.redirectUris(new String[] {"http://localhost:9092/dummy-client"})
-							.scopes ( new String[] {"SCOPE_TEST"} )
-							.autoApprove(new String[] {"SCOPE_TEST"})
+							.redirectUris(new String[] {"http://localhost:9091/login/oauth2/code/sample-public-client-pkce"})
+							.scopes ( new String[] {"public-client-scope-pkce"} )
+							.autoApprove(new String[] {"public-client-scope-pkce"})
 							.authorizedGrantTypes(new String[] {"authorization_code"});
 				}
 

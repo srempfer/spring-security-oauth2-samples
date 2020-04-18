@@ -3,8 +3,8 @@
 GET http://localhost:8082/oauth/authorize?
         response_type=code
         &client_id=private-client
-        &redirect_uri=http://localhost:9091/dummy-client
-        &scope=SCOPE_TEST
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-pkce
+        &scope=private-client-scope-pkce
         &state=sdf7s990s
 
 > {%
@@ -21,7 +21,7 @@ GET http://localhost:8082/oauth/authorize?
 POST http://localhost:8082/oauth/token?
         grant_type=authorization_code
         &code={{authorization_code}}
-        &redirect_uri=http://localhost:9091/dummy-client
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-pkce
 Authorization: Basic private-client secret
 
 > {%
@@ -31,6 +31,6 @@ Authorization: Basic private-client secret
         client.assert(response.body.token_type === 'bearer', "Wrong token type");
         client.assert(response.body.refresh_token, "refresh_token is expected");
         client.assert(response.body.expires_in, "expires_in is expected");
-        client.assert(response.body.scope === 'SCOPE_TEST', "Wrong scope");
+        client.assert(response.body.scope === 'private-client-scope-pkce', "Wrong scope");
     });
  %}
