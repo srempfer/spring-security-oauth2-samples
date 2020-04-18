@@ -28,6 +28,8 @@ import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter;
 import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter;
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,14 +41,21 @@ public class AuthorizationServerPkceSampleApplication {
 		SpringApplication.run(AuthorizationServerPkceSampleApplication.class, args);
 	}
 
+	@Bean
+	public TokenStore tokenStore () {
+		return new InMemoryTokenStore();
+	}
+
 	@EnableConfigurationProperties(AuthorizationServerProperties.class)
 	@Configuration
 	public class AuthorizationServerConfig {
 
 		private final AuthorizationServerProperties properties;
+		private final TokenStore tokenStore;
 
-		public AuthorizationServerConfig(AuthorizationServerProperties properties) {
+		public AuthorizationServerConfig(AuthorizationServerProperties properties, TokenStore tokenStore) {
 			this.properties = properties;
+			this.tokenStore = tokenStore;
 		}
 
 		@Bean
@@ -100,7 +109,9 @@ public class AuthorizationServerPkceSampleApplication {
 				}
 
 				@Override
-				public void configure(AuthorizationServerEndpointsConfigurer authorizationServerEndpointsConfigurer) throws Exception {
+				public void configure(AuthorizationServerEndpointsConfigurer authorizationServerEndpointsConfigurer) {
+
+					authorizationServerEndpointsConfigurer.tokenStore(tokenStore);
 
 					////////////////////////////////////////////////////////////////////////////////
 					//
@@ -108,7 +119,7 @@ public class AuthorizationServerPkceSampleApplication {
 					//
 					// Most is copied from org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer.tokenGranter()
 					// only the AuthorizationCodeTokenGranter is replaced with PkceAuthorizationCodeTokenGranter
-					// and the ResourceOwnerPasswordTokenGranter is removed
+					// and the ResourceOwnerPasswordTokenGranter is missing
 					//
 					authorizationServerEndpointsConfigurer.requestValidator ( new PkceOAuth2RequestValidator () );
 
@@ -162,7 +173,7 @@ public class AuthorizationServerPkceSampleApplication {
 		protected void configure(HttpSecurity http) throws Exception {
 			http
 				.authorizeRequests()
-					.antMatchers("/").permitAll()
+					.antMatchers("/", "/userinfo").permitAll()
 					.anyRequest().authenticated()
 					.and()
 				.formLogin()

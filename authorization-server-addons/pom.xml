@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.srempfer.security.oauth</groupId>
-	<artifactId>authorization-server-minimal-sample</artifactId>
+	<artifactId>authorization-server-addons</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>authorization-server-minimal-sample</name>
-	<description>Sample project for an Authorization Server with minimal configuration</description>
+	<name>authorization-server-addons</name>
+	<description>Library for the Authorization Server Addons</description>
 
 	<properties>
 		<java.version>11</java.version>
@@ -25,18 +25,13 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-oauth2</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.srempfer.security.oauth</groupId>
-			<artifactId>authorization-server-addons</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
 		<dependency>
@@ -63,14 +58,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

@@ -12,6 +12,7 @@
     <url>https://github.com/srempfer/spring-security-oauth-samples</url>
 
     <modules>
+        <module>authorization-server-addons</module>
         <module>authorization-server-minimal-sample</module>
         <module>authorization-server-pkce-sample</module>
     </modules>
