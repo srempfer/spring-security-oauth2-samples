@@ -1,0 +1,10 @@
+### Call resource server controller
+GET http://localhost:7072/greet
+Authorization: Bearer {{access-token}}
+
+> {%
+    client.test("Should return greeting", function() {
+        client.assert(response.status === 200, "Wrong response status");
+        client.assert(response.body.indexOf("Greetings from") !== -1, "Wrong content");
+    });
+ %}

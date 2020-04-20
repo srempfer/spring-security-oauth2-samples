@@ -19,6 +19,7 @@
         <module>authorization-server-jwt-sample</module>
 		<module>client-oauth2-sample</module>
         <module>resource-server-opaque-sample</module>
+        <module>resource-server-jwt-sample</module>
     </modules>
 
 </project>
