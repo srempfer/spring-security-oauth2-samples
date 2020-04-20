@@ -1,0 +1,27 @@
+### Get the csrf token for login
+GET http://localhost:8085/login
+
+> {%
+    client.test("Should return login page", function() {
+        client.assert(response.status === 200, "Wrong response status");
+        client.assert(response.body.indexOf("_csrf") !== -1, 'Wrong content');
+        client.assert(response.body.indexOf("username") !== -1, 'Wrong content');
+        client.assert(response.body.indexOf("password") !== -1, 'Wrong content');
+    });
+
+    client.global.set("csrf-token", response.body.match('(.*name="_csrf" type="hidden" value=")(.*)(".*)')[2] );
+    client.log(client.global.get("csrf-token"))
+ %}
+
+### Do login
+POST http://localhost:8085/login
+Content-Type: application/x-www-form-urlencoded
+
+username=testuser&password=testpw&_csrf={{csrf-token}}
+
+> {%
+    client.test("Should login user", function() {
+        client.assert(response.status === 302, "Wrong response status");
+        client.assert(response.headers.valueOf("Location") === "http://localhost:8085/", "Wrong redirect");
+    });
+ %}

@@ -1,0 +1,10 @@
+### Get JWKS
+GET http://localhost:8085/.well-known/jwks.json
+
+> {%
+    client.test("Should return login page", function() {
+        client.assert(response.status === 200, "Wrong response status");
+        client.assert(response.body.keys, 'Wrong content');
+    });
+ %}
+

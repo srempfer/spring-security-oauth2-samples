@@ -16,6 +16,7 @@
         <module>authorization-server-minimal-sample</module>
         <module>authorization-server-pkce-sample</module>
         <module>authorization-server-introspect-sample</module>
+        <module>authorization-server-jwt-sample</module>
 		<module>client-oauth2-sample</module>
         <module>resource-server-opaque-sample</module>
     </modules>
