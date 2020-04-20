@@ -1,5 +1,5 @@
 ### Introspect token
-POST http://localhost:8083/oauth/introspect
+POST http://localhost:8081/oauth/check_token
 Authorization: Basic private-client secret
 Content-Type: application/x-www-form-urlencoded
 
@@ -8,13 +8,10 @@ token={{access-token}}
 > {%
     client.test("Should return token info", function() {
         client.assert(response.status === 200, "Wrong response status");
-        client.assert(response.body.scope === "private-client-scope-int", "Wrong scope");
         client.assert(response.body.active === true, "Token is not active");
         client.assert(response.body.exp, "Expire time is expected");
         client.assert(response.body.client_id === "private-client", "Wrong client id");
-        client.assert(response.body.username === 'testuser', "Wrong user name");
+        client.assert(response.body.user_name === 'testuser', "Wrong user name");
     });
 
-    client.global.set("access-token", response.body.access_token );
-    client.log(client.global.get("access-token"))
  %}

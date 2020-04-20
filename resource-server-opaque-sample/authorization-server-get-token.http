@@ -1,5 +1,5 @@
 ### Get the csrf token for login
-GET http://localhost:8083/login
+GET http://localhost:8081/login
 
 > {%
     client.test("Should return login page", function() {
@@ -14,7 +14,7 @@ GET http://localhost:8083/login
  %}
 
 ### Do login
-POST http://localhost:8083/login
+POST http://localhost:8081/login
 Content-Type: application/x-www-form-urlencoded
 
 username=testuser&password=testpw&_csrf={{csrf-token}}
@@ -22,17 +22,17 @@ username=testuser&password=testpw&_csrf={{csrf-token}}
 > {%
     client.test("Should login user", function() {
         client.assert(response.status === 302, "Wrong response status");
-        client.assert(response.headers.valueOf("Location") === "http://localhost:8083/", "Wrong redirect");
+        client.assert(response.headers.valueOf("Location") === "http://localhost:8081/", "Wrong redirect");
     });
  %}
 
 ### Do Authorize
 # @no-redirect
-GET http://localhost:8083/oauth/authorize?
+GET http://localhost:8081/oauth/authorize?
         response_type=code
         &client_id=private-client
-        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-int
-        &scope=private-client-scope-int
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-min
+        &scope=private-client-scope-min
         &state=sdf7s990s
 
 > {%
@@ -46,10 +46,10 @@ GET http://localhost:8083/oauth/authorize?
  %}
 
 ### Get token
-POST http://localhost:8083/oauth/token?
+POST http://localhost:8081/oauth/token?
         grant_type=authorization_code
         &code={{authorization_code}}
-        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-int
+        &redirect_uri=http://localhost:9091/login/oauth2/code/sample-private-client-min
 Authorization: Basic private-client secret
 
 > {%
@@ -59,7 +59,7 @@ Authorization: Basic private-client secret
         client.assert(response.body.token_type === "bearer", "Wrong token type");
         client.assert(response.body.refresh_token, "refresh_token is expected");
         client.assert(response.body.expires_in, "expires_in is expected");
-        client.assert(response.body.scope === "private-client-scope-int", "Wrong scope");
+        client.assert(response.body.scope === "private-client-scope-min", "Wrong scope");
     });
 
     client.global.set("access-token", response.body.access_token );
