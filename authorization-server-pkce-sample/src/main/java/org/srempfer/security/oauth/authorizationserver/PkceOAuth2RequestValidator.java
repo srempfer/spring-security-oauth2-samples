@@ -36,6 +36,11 @@ public class PkceOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
     public void validateScope ( TokenRequest tokenRequest, ClientDetails client ) throws InvalidScopeException {
         super.validateScope ( tokenRequest, client );
 
+        String grantType = tokenRequest.getGrantType ();
+        if ( "refresh_token".equals ( grantType ) ) {
+            return;
+        }
+
         Map<String, String> requestParameters = tokenRequest.getRequestParameters ();
 
         String codeVerifier = requestParameters.get ( "code_verifier" );
