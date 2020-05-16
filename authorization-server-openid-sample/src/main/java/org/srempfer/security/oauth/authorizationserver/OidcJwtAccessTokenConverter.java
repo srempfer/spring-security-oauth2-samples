@@ -2,7 +2,11 @@ package org.srempfer.security.oauth.authorizationserver;
 
 
 import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +24,8 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Custom {@link JwtAccessTokenConverter} which do stuff required for OIDC.
@@ -95,6 +101,7 @@ public class OidcJwtAccessTokenConverter extends JwtAccessTokenConverter {
 		additionalInformation.put("aud", clientId);
 		additionalInformation.put("iss", baseUrl);
 		additionalInformation.put("iat", System.currentTimeMillis() / 1000);
+		additionalInformation.put("at_hash", calculateAccessTokenHash(accessToken.getValue()));
 
 		if (StringUtils.isNoneBlank(nonce)) {
 			additionalInformation.put("nonce", nonce);
@@ -103,6 +110,18 @@ public class OidcJwtAccessTokenConverter extends JwtAccessTokenConverter {
 		result.setAdditionalInformation(additionalInformation);
 
 		return result;
+	}
+
+	private String calculateAccessTokenHash(String accessToken) {
+		try {
+			final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			final byte[] hashedBytes = digest.digest(accessToken.getBytes(UTF_8));
+			byte[] firstHalf = Arrays.copyOf(hashedBytes, hashedBytes.length / 2);
+			return Base64.getUrlEncoder().withoutPadding().encodeToString(firstHalf);
+		}
+		catch (NoSuchAlgorithmException e) {
+			throw new IllegalArgumentException("Could not hash access token", e);
+		}
 	}
 
 }
